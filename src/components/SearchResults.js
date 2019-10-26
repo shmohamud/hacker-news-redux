@@ -8,16 +8,26 @@ const SearchResults = props => {
     query,
     processingTimeMS,
     nbPages,
+    params,
     page
   } = props.stories;
 
+  console.log(props.queries);
+
   return (
     <Fragment>
-      {query && (
-        <p>
-          {nbHits} results for <strong>{query}</strong> ({processingTimeMS}ms):
-        </p>
-      )}
+      <p>
+        {query ? (
+          <span>
+            {nbHits} results for <strong>{query}</strong> ({processingTimeMS}
+            ms):
+          </span>
+        ) : params.slice(-10) === "front_page" ? (
+          <strong>Top Stories</strong>
+        ) : (
+          <strong>Latest Stories</strong>
+        )}
+      </p>
 
       <ol className="stories">
         {stories.map(story => (
@@ -36,6 +46,16 @@ const SearchResults = props => {
         <p>
           Page {page} of {nbPages}
         </p>
+      )}
+
+      {props.queries.length > 0 && (
+        <div>
+          <hr />
+          <h2>Redux Search History</h2>
+          {props.queries.map(query => (
+            <p>{query}</p>
+          ))}
+        </div>
       )}
     </Fragment>
   );

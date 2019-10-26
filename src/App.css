@@ -7,6 +7,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+button:hover,
+input[type="submit"] {
+  cursor: pointer;
+}
+
+button,
+#searchForm input {
+  margin-right: 0.5em;
+}
+
+#searchForm {
+  display: inline;
+}
+
 .stories li {
   margin-bottom: 0.5em;
 }

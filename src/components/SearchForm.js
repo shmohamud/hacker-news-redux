@@ -8,11 +8,19 @@ const SearchForm = props => {
   const handleSubmit = e => {
     e.preventDefault();
     props.search(query);
+    setQuery("");
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={query} onChange={handleChange} />
+    <form id="searchForm" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Search Stories"
+        id="query"
+        value={query}
+        onChange={handleChange}
+        required
+      />
       <input type="submit" value="Search" />
     </form>
   );
