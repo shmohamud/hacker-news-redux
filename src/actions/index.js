@@ -4,3 +4,10 @@ export const addQuery = query => {
     payload: query
   };
 };
+
+export const removeQuery = query => {
+  return {
+    type: "REMOVE_QUERY",
+    payload: query
+  };
+};
