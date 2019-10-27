@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const SearchForm = ({ search }) => {
+export default function SearchForm({ search }) {
   const [query, setQuery] = useState("");
 
   const handleChange = e => setQuery(e.target.value);
@@ -24,6 +24,4 @@ const SearchForm = ({ search }) => {
       <input type="submit" value="Search" />
     </form>
   );
-};
-
-export default SearchForm;
+}
