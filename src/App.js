@@ -1,60 +1,42 @@
-import React, { useState, useEffect } from "react";
-import SearchForm from "./components/SearchForm";
+import React, { useEffect } from "react";
+import SearchHeader from "./components/SearchHeader";
 import SearchResults from "./components/SearchResults";
 import SearchHistory from "./components/SearchHistory";
 import { useSelector, useDispatch } from "react-redux";
-import { addQuery, removeQuery } from "./actions";
+import { addQuery, setStories } from "./redux/actions";
 import "./App.css";
 
-const numResults = 10,
-  API = "http://hn.algolia.com/api/v1/search",
-  TOP_STORIES = `${API}?tags=front_page&hitsPerPage=${numResults}`,
-  LATEST_STORIES = `${API}_by_date?tags=story&hitsPerPage=${numResults}`;
+import { TOP_STORIES, SEARCH_STORIES } from "./api";
 
-const App = () => {
-  const queries = useSelector(state => state.queries);
+export default function App() {
   const dispatch = useDispatch();
+  const queries = useSelector(state => state.queries);
+  const stories = useSelector(state => state.stories);
 
-  const [stories, setStories] = useState({});
-  const [isFetching, setIsFetching] = useState(false);
-
-  const getStories = async request => {
-    setIsFetching(true); // Prevent double render of SearchResults
-    const stories = await fetch(request);
-    stories.json().then(stories => {
-      setStories(stories);
-      setIsFetching(false); // Allow SearchResults to render
+  // Fetch from API
+  const getStories = async (request, query = "") => {
+    const data = await fetch(request + query);
+    data.json().then(data => {
+      // If query is new, add it to history
+      query.length && !queries.includes(query) && dispatch(addQuery(query));
+      // Update stories in Redux to update <SearchResults> component
+      dispatch(setStories(data));
     });
   };
 
-  // Fetch results of search and add query to Redux store
-  const search = query => {
-    getStories(`${API}?query=${query}&tags=story&hitsPerPage=${numResults}`);
-    !queries.includes(query) && dispatch(addQuery(query));
-  };
+  // Pass search query from <SearchForm> or <SearchHistory>
+  const search = query => getStories(SEARCH_STORIES, query);
 
-  // Remove a query from Redux store
-  const destroy = query => {
-    queries.includes(query) && dispatch(removeQuery(query));
-  };
-
-  // Load Top Stories when application mounts
   useEffect(() => {
     getStories(TOP_STORIES);
+    // eslint-disable-next-line
   }, []);
 
   return (
-    <>
-      <button onClick={() => getStories(TOP_STORIES)}>Top Stories</button>
-      <button onClick={() => getStories(LATEST_STORIES)}>Latest Stories</button>
-      <SearchForm search={search} />
-      <hr />
-      {!isFetching && stories.hits && (
-        <SearchResults stories={stories} queries={queries} />
-      )}
-      <SearchHistory queries={queries} search={search} destroy={destroy} />
-    </>
+    <div>
+      <SearchHeader getStories={getStories} search={search} />
+      {stories.hits && <SearchResults />}
+      <SearchHistory search={search} />
+    </div>
   );
-};
-
-export default App;
+}

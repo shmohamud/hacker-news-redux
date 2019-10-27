@@ -11,3 +11,10 @@ export const removeQuery = query => {
     payload: query
   };
 };
+
+export const setStories = data => {
+  return {
+    type: "SET_STORIES",
+    payload: data
+  };
+};

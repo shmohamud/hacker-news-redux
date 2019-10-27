@@ -7,6 +7,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+h2 {
+  font-size: 1.25em;
+}
+
+h2.results-header {
+  font-weight: normal;
+}
+
 button:hover,
 input[type="submit"] {
   cursor: pointer;

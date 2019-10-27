@@ -1,7 +1,8 @@
 import React from "react";
 import Moment from "react-moment";
+import { useSelector } from "react-redux";
 
-const SearchResults = props => {
+export default function SearchResults(props) {
   const {
     hits: stories,
     nbHits,
@@ -10,9 +11,7 @@ const SearchResults = props => {
     nbPages,
     params,
     page
-  } = props.stories;
-
-  console.log(props.queries);
+  } = useSelector(state => state.stories);
 
   // Possible headers for results list
   const topStoriesHeader = <strong>Top Stories</strong>;
@@ -24,25 +23,24 @@ const SearchResults = props => {
   );
 
   return (
-    <>
-      <p>
-        {/* Results List Header */}
+    <div>
+      <h2 className="results-header">
         {query
-          ? // If there is a query, show the search results header
+          ? // If there is a query, show it in header
             searchResultsHeader
-          : // If no queries, the options are Top and Latest Stories
+          : // If there isn't, show Top or Latest Stories
           params.slice(-10) === "front_page"
-          ? // "front_page" at end of params indicates a Top Stories request
-            topStoriesHeader
-          : // In this app, the only remaining option is a Latest Stories request
-            latestStoriesHeader}
-      </p>
+          ? topStoriesHeader
+          : latestStoriesHeader}
+      </h2>
 
       {/* List of Stories: Top, Recent or by Search */}
       <ol className="stories">
         {stories.map(story => (
           <li key={story.objectID}>
-            <a href={story.url}>{story.title}</a>
+            <a href={story.url} target="_blank" rel="noopener noreferrer">
+              {story.title}
+            </a>
             <small>
               {story.points} points by {story.author}{" "}
               <Moment fromNow>{story.created_at}</Moment> | {story.num_comments}{" "}
@@ -52,15 +50,13 @@ const SearchResults = props => {
         ))}
       </ol>
 
-      {/* If search returns multiple pages, show how many */}
+      {/* Number of pages of results */}
       {page > 0 && (
-        <p>
+        <p className="pages">
           Page {page} of {nbPages}
         </p>
       )}
       <hr />
-    </>
+    </div>
   );
-};
-
-export default SearchResults;
+}
